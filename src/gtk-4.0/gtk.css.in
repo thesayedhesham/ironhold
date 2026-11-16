@@ -1,0 +1,137 @@
+/* Ironhold — GTK 4 / libadwaita overrides.
+ * libadwaita ignores gtk-theme, but honours ~/.config/gtk-4.0/gtk.css: we recolor its named
+ * palette and add the gilded trim on top. install.sh backs up any existing file first.
+ */
+
+/* ---------------------------------------------------------------- libadwaita named colors */
+@define-color accent_color {{metal_hi}};
+@define-color accent_bg_color {{accent}};
+@define-color accent_fg_color {{text_on_accent}};
+@define-color destructive_color {{danger}};
+@define-color destructive_bg_color {{danger}};
+@define-color destructive_fg_color #ffffff;
+@define-color success_color {{success}};
+@define-color success_bg_color {{success}};
+@define-color warning_color {{warning}};
+@define-color warning_bg_color {{warning}};
+@define-color error_color {{danger}};
+@define-color error_bg_color {{danger}};
+
+@define-color window_bg_color {{surface}};
+@define-color window_fg_color {{text}};
+@define-color view_bg_color {{bg}};
+@define-color view_fg_color {{text}};
+@define-color headerbar_bg_color {{surface_hi}};
+@define-color headerbar_fg_color {{text}};
+@define-color headerbar_border_color {{metal_lo}};
+@define-color headerbar_backdrop_color {{surface}};
+@define-color headerbar_shade_color rgba(0, 0, 0, 0.5);
+@define-color sidebar_bg_color {{bg_alt}};
+@define-color sidebar_fg_color {{text}};
+@define-color sidebar_backdrop_color {{bg_alt}};
+@define-color sidebar_shade_color rgba(0, 0, 0, 0.5);
+@define-color secondary_sidebar_bg_color {{bg}};
+@define-color card_bg_color {{surface_hi}};
+@define-color card_fg_color {{text}};
+@define-color card_shade_color rgba(0, 0, 0, 0.45);
+@define-color dialog_bg_color {{surface}};
+@define-color dialog_fg_color {{text}};
+@define-color popover_bg_color {{surface}};
+@define-color popover_fg_color {{text}};
+@define-color popover_shade_color rgba(0, 0, 0, 0.5);
+@define-color thumbnail_bg_color {{surface_hi}};
+@define-color thumbnail_fg_color {{text}};
+@define-color shade_color rgba(0, 0, 0, 0.45);
+@define-color scrollbar_outline_color {{bg_alt}};
+
+/* ---------------------------------------------------------------- trim */
+headerbar, .top-bar headerbar, toolbarview > .top-bar {
+  background-image: linear-gradient(to bottom, {{surface_hi}}, {{surface}});
+  box-shadow: inset 0 1px {{metal,0.25}}, inset 0 -2px {{metal_lo}};
+}
+headerbar:backdrop { background-image: none; box-shadow: inset 0 -1px {{border}}; }
+windowtitle .title, headerbar .title { color: {{metal_hi}}; font-weight: bold; letter-spacing: 1px; }
+
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):not(.circular) {
+  background-image: linear-gradient(to bottom, {{surface_hi}}, {{surface}});
+  box-shadow: inset 0 0 0 1px {{metal_lo}}, inset 0 2px {{metal,0.12}};
+}
+button:not(.flat):not(.suggested-action):not(.destructive-action):not(.titlebutton):hover {
+  box-shadow: inset 0 0 0 1px {{metal}}, inset 0 2px {{metal,0.2}};
+  color: {{metal_hi}};
+}
+button.suggested-action, button.pill.suggested-action {
+  background-image: linear-gradient(to bottom, {{accent_hi}}, {{accent_lo}});
+  box-shadow: inset 0 0 0 1px {{metal}}, inset 0 2px {{metal_hi,0.35}};
+  color: {{text_on_accent}};
+  font-weight: bold;
+}
+
+windowcontrols button > image {
+  background-image: radial-gradient(circle at 35% 35%, {{metal_hi}}, {{metal}} 55%, {{metal_lo}});
+  color: {{bg_alt}};
+}
+windowcontrols button.close:hover > image {
+  background-image: radial-gradient(circle at 35% 35%, #ffd0c0, {{danger}} 60%, {{accent_lo}});
+  color: #fff;
+}
+
+entry, spinbutton, .entry, text { caret-color: {{metal_hi}}; }
+entry:focus-within, spinbutton:focus-within { outline-color: {{metal,0.6}}; }
+
+switch:checked { background-color: {{accent}}; }
+switch slider { background-image: radial-gradient(circle at 35% 30%, {{metal_hi}}, {{metal}} 55%, {{metal_lo}}); }
+check:checked, radio:checked { background-color: {{accent}}; box-shadow: inset 0 0 0 1px {{metal}}; }
+scale highlight, progressbar progress, levelbar block.filled {
+  background-image: linear-gradient(to bottom, {{metal_hi}}, {{metal}} 60%, {{metal_lo}});
+}
+
+.navigation-sidebar row:selected, .sidebar-pane row:selected {
+  background-image: linear-gradient(to right, {{accent}}, {{accent_lo}});
+  box-shadow: inset 3px 0 {{metal}};
+  color: {{text_on_accent}};
+}
+.boxed-list, .card, list.boxed-list {
+  box-shadow: 0 0 0 1px {{metal_lo,0.7}}, 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+tooltip, tooltip.background { background-color: {{parchment}}; color: {{ink}}; box-shadow: 0 0 0 1px {{metal_lo}}; }
+tooltip * { color: {{ink}}; }
+
+popover > contents, popover.menu > contents { box-shadow: 0 0 0 1px {{metal_lo}}, 0 4px 14px rgba(0, 0, 0, 0.6); }
+popover.menu modelbutton:hover, popover.menu row:hover { background-color: {{accent,0.55}}; }
+
+scrollbar slider { background-color: {{metal_lo}}; }
+scrollbar slider:hover { background-color: {{metal}}; }
+
+/* ---------------------------------------------------------------- ornate layer
+ * install.sh copies the generated textures to ~/.config/gtk-4.0/ironhold-assets/.
+ */
+headerbar, toolbarview > .top-bar {
+  background-image: linear-gradient(to bottom, {{metal,0.08}}, rgba(0, 0, 0, 0.3)), url("ironhold-assets/stone.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+windowtitle .title, headerbar .title, .title-1, .title-2, .title-3, .title-4, .heading.title {
+  font-family: "Cinzel", "Cinzel Decorative", serif;
+  font-weight: 700;
+}
+.navigation-sidebar, .sidebar-pane {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url("ironhold-assets/stone.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+tooltip, tooltip.background {
+  background-image: url("ironhold-assets/parchment.png");
+  background-size: 128px 128px;
+  border-style: solid;
+  border-width: 12px;
+  border-image: url("ironhold-assets/frame-48.png") 12 stretch;
+  border-radius: 0;
+}
+popover > contents {
+  border-style: solid;
+  border-width: 12px;
+  border-image: url("ironhold-assets/frame-48.png") 12 stretch;
+  border-radius: 0;
+}

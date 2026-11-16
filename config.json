@@ -1,0 +1,84 @@
+{
+  "name": "Ironhold",
+  "description": "A high-fantasy RTS inspired desktop theme: forged iron, carved stone, gilded trim and war banners.",
+  "variants": {
+    "Crown": {
+      "label": "Crown (blue & gold, steel and stone)",
+      "emblem": "sword",
+      "colors": {
+        "bg": "#10151f",
+        "bg_alt": "#0a0e15",
+        "surface": "#182132",
+        "surface_hi": "#223049",
+        "border": "#34425c",
+        "border_hi": "#4c5d7d",
+        "metal": "#c9a03d",
+        "metal_hi": "#f0d27a",
+        "metal_lo": "#7d5f1f",
+        "accent": "#2a5aa8",
+        "accent_hi": "#3f7bd6",
+        "accent_lo": "#183a73",
+        "text": "#eee4cc",
+        "text_dim": "#a39d8a",
+        "text_on_accent": "#fff8e6",
+        "parchment": "#e7d7ad",
+        "ink": "#3b2c16",
+        "danger": "#c0392b",
+        "success": "#5d9a3c",
+        "warning": "#e0952f",
+        "link": "#7fb0f0",
+        "sky_top": "#050912",
+        "sky_mid": "#13254a",
+        "sky_low": "#3a5a8f",
+        "glow": "#f5d77a",
+        "steel_hi": "#e8edf5",
+        "steel": "#9aa6ba",
+        "steel_lo": "#4d586d"
+      },
+      "windows_accent": "metal",
+      "sound": {
+        "style": "crown",
+        "root": 523.25
+      }
+    },
+    "Ember": {
+      "label": "Ember (red & black, iron and bronze)",
+      "emblem": "axes",
+      "colors": {
+        "bg": "#150e0c",
+        "bg_alt": "#0c0807",
+        "surface": "#221613",
+        "surface_hi": "#301f1a",
+        "border": "#4d3127",
+        "border_hi": "#6e4636",
+        "metal": "#b5793d",
+        "metal_hi": "#e3a865",
+        "metal_lo": "#6b4220",
+        "accent": "#a3241b",
+        "accent_hi": "#d23b2a",
+        "accent_lo": "#64130e",
+        "text": "#eddcc3",
+        "text_dim": "#a8957d",
+        "text_on_accent": "#fff1e0",
+        "parchment": "#dcc39a",
+        "ink": "#3a1f12",
+        "danger": "#e0452f",
+        "success": "#7a9a3a",
+        "warning": "#e39a2f",
+        "link": "#f08a5d",
+        "sky_top": "#0b0504",
+        "sky_mid": "#3d0f0a",
+        "sky_low": "#a8361c",
+        "glow": "#ff8a3d",
+        "steel_hi": "#b3a397",
+        "steel": "#6a5a52",
+        "steel_lo": "#2a2220"
+      },
+      "windows_accent": "accent_hi",
+      "sound": {
+        "style": "ember",
+        "root": 196.0
+      }
+    }
+  }
+}

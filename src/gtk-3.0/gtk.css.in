@@ -1,0 +1,281 @@
+/* Ironhold — GTK 3 theme.
+ * Built on top of Adwaita-dark so every widget we don't explicitly restyle still renders correctly.
+ * Colors come from config.json via build.py (double-brace color tokens).
+ */
+@import url("resource:///org/gtk/libgtk/theme/Adwaita/gtk-contained-dark.css");
+
+@define-color theme_bg_color {{surface}};
+@define-color theme_fg_color {{text}};
+@define-color theme_base_color {{bg}};
+@define-color theme_text_color {{text}};
+@define-color theme_selected_bg_color {{accent}};
+@define-color theme_selected_fg_color {{text_on_accent}};
+@define-color insensitive_bg_color {{surface}};
+@define-color insensitive_fg_color {{text_dim}};
+@define-color borders {{border}};
+@define-color warning_color {{warning}};
+@define-color error_color {{danger}};
+@define-color success_color {{success}};
+@define-color accent_color {{metal}};
+
+/* ---------------------------------------------------------------- base */
+* { outline-color: {{metal,0.6}}; }
+
+window, .background { background-color: {{surface}}; color: {{text}}; }
+
+label.dim-label, .dim-label { color: {{text_dim}}; opacity: 1; }
+
+*:selected, selection,
+treeview.view:selected, row:selected, flowboxchild:selected,
+iconview:selected, calendar:selected {
+  background-color: {{accent}};
+  color: {{text_on_accent}};
+}
+
+link, button.link, *:link { color: {{link}}; }
+link:visited, *:visited { color: {{metal}}; }
+
+/* ---------------------------------------------------------------- titlebars / headerbars */
+headerbar, .titlebar:not(headerbar) {
+  background-image: linear-gradient(to bottom, {{surface_hi}}, {{surface}});
+  background-color: {{surface}};
+  border-bottom: 2px solid {{metal_lo}};
+  box-shadow: inset 0 1px {{metal,0.25}}, inset 0 -1px {{bg_alt}};
+  color: {{text}};
+}
+headerbar:backdrop, .titlebar:backdrop {
+  background-image: none;
+  background-color: {{surface}};
+  border-bottom-color: {{border}};
+}
+headerbar .title { font-weight: bold; letter-spacing: 1px; color: {{metal_hi}}; }
+headerbar .subtitle { color: {{text_dim}}; }
+
+decoration { box-shadow: 0 0 0 1px {{metal_lo}}, 0 6px 22px 2px rgba(0, 0, 0, 0.6); }
+decoration:backdrop { box-shadow: 0 0 0 1px {{border}}, 0 4px 14px rgba(0, 0, 0, 0.5); }
+
+/* window controls: gilded rivets */
+headerbar button.titlebutton, .titlebar button.titlebutton {
+  min-width: 18px; min-height: 18px; padding: 2px;
+  border-radius: 50%;
+  background-image: radial-gradient(circle at 35% 35%, {{metal_hi}}, {{metal}} 55%, {{metal_lo}});
+  border: 1px solid {{bg_alt}};
+  color: {{bg_alt}};
+  box-shadow: none;
+}
+headerbar button.titlebutton:hover { background-image: radial-gradient(circle at 35% 35%, #ffffff, {{metal_hi}} 50%, {{metal}}); }
+headerbar button.titlebutton.close:hover { background-image: radial-gradient(circle at 35% 35%, #ffd0c0, {{danger}} 60%, {{accent_lo}}); color: #fff; }
+headerbar button.titlebutton:backdrop { background-image: none; background-color: {{border}}; color: {{text_dim}}; }
+
+/* ---------------------------------------------------------------- buttons */
+button {
+  background-image: linear-gradient(to bottom, {{surface_hi}}, {{surface}});
+  border: 1px solid {{metal_lo}};
+  border-radius: 4px;
+  color: {{text}};
+  box-shadow: inset 0 1px {{metal,0.18}}, 0 1px 2px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px rgba(0, 0, 0, 0.6);
+}
+button:hover {
+  background-image: linear-gradient(to bottom, {{border_hi}}, {{surface_hi}});
+  border-color: {{metal}};
+  color: {{metal_hi}};
+}
+button:active, button:checked {
+  background-image: linear-gradient(to bottom, {{bg_alt}}, {{surface}});
+  border-color: {{metal}};
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  color: {{metal_hi}};
+}
+button:disabled { background-image: none; background-color: {{surface}}; border-color: {{border}}; color: {{text_dim}}; box-shadow: none; }
+button.flat, button.image-button.flat, headerbar button:not(.titlebutton):not(.suggested-action):not(.destructive-action) {
+  background-image: none; background-color: transparent; border-color: transparent; box-shadow: none;
+}
+button.flat:hover, headerbar button:not(.titlebutton):not(.suggested-action):not(.destructive-action):hover {
+  background-color: {{metal,0.12}}; border-color: {{metal_lo}};
+}
+
+button.suggested-action, .suggested-action button {
+  background-image: linear-gradient(to bottom, {{accent_hi}}, {{accent_lo}});
+  border: 1px solid {{metal}};
+  color: {{text_on_accent}};
+  font-weight: bold;
+  box-shadow: inset 0 1px {{metal_hi,0.45}}, 0 0 0 1px {{bg_alt}}, 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+button.suggested-action:hover { background-image: linear-gradient(to bottom, {{accent_hi}}, {{accent}}); border-color: {{metal_hi}}; color: #fff; }
+button.destructive-action {
+  background-image: linear-gradient(to bottom, {{danger}}, shade({{danger}}, 0.6));
+  border-color: {{metal_lo}}; color: #fff;
+}
+
+/* ---------------------------------------------------------------- entries */
+entry, spinbutton:not(.vertical), textview text, .view text {
+  background-color: {{bg_alt}};
+  color: {{text}};
+}
+entry, spinbutton:not(.vertical) {
+  border: 1px solid {{border_hi}};
+  border-radius: 3px;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.55);
+  caret-color: {{metal_hi}};
+}
+entry:focus, spinbutton:focus { border-color: {{metal}}; box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.55), 0 0 0 1px {{metal,0.45}}; }
+entry selection { background-color: {{metal,0.45}}; color: #fff; }
+
+/* ---------------------------------------------------------------- checks, radios, switches */
+check, radio {
+  background-image: linear-gradient(to bottom, {{bg_alt}}, {{surface}});
+  border: 1px solid {{metal_lo}};
+  color: {{metal_hi}};
+}
+check:checked, radio:checked {
+  background-image: linear-gradient(to bottom, {{accent_hi}}, {{accent_lo}});
+  border-color: {{metal}};
+  color: {{text_on_accent}};
+}
+switch {
+  background-color: {{bg_alt}};
+  border: 1px solid {{metal_lo}};
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6);
+}
+switch:checked { background-image: linear-gradient(to bottom, {{accent_lo}}, {{accent}}); border-color: {{metal}}; }
+switch slider {
+  background-image: radial-gradient(circle at 35% 30%, {{metal_hi}}, {{metal}} 55%, {{metal_lo}});
+  border: 1px solid {{bg_alt}};
+}
+
+/* ---------------------------------------------------------------- scales & progress */
+scale trough, progressbar trough, levelbar trough {
+  background-color: {{bg_alt}};
+  border: 1px solid {{border}};
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+scale highlight, progressbar progress, levelbar block.filled {
+  background-image: linear-gradient(to bottom, {{metal_hi}}, {{metal}} 60%, {{metal_lo}});
+  border-color: {{metal_lo}};
+}
+scale slider {
+  background-image: radial-gradient(circle at 35% 30%, {{metal_hi}}, {{metal}} 55%, {{metal_lo}});
+  border: 1px solid {{bg_alt}};
+}
+
+/* ---------------------------------------------------------------- lists, sidebars, views */
+.view, treeview.view, iconview, list, listbox, textview { background-color: {{bg}}; color: {{text}}; }
+treeview.view header button {
+  background-image: linear-gradient(to bottom, {{surface_hi}}, {{surface}});
+  border-color: {{border}}; color: {{metal_hi}}; font-weight: bold; border-radius: 0;
+}
+list row:hover, listbox row:hover, treeview.view:hover { background-color: {{metal,0.08}}; }
+
+.sidebar, placessidebar, placessidebar list, stacksidebar list, .navigation-sidebar {
+  background-color: {{bg_alt}};
+  border-right: 1px solid {{metal_lo}};
+}
+placessidebar row:selected, .navigation-sidebar row:selected, stacksidebar row:selected {
+  background-image: linear-gradient(to right, {{accent}}, {{accent_lo}});
+  box-shadow: inset 3px 0 {{metal}};
+}
+
+/* Nautilus */
+.nautilus-window .view, .nautilus-window notebook { background-color: {{bg}}; }
+.nautilus-window .path-bar button:checked { color: {{metal_hi}}; }
+
+/* ---------------------------------------------------------------- notebooks */
+notebook > header { background-color: {{bg_alt}}; border-color: {{metal_lo}}; }
+notebook > header tab { color: {{text_dim}}; }
+notebook > header tab:hover { color: {{text}}; box-shadow: inset 0 -2px {{metal_lo}}; }
+notebook > header tab:checked { color: {{metal_hi}}; box-shadow: inset 0 -3px {{metal}}; }
+notebook > stack:not(:only-child) { background-color: {{surface}}; }
+
+/* ---------------------------------------------------------------- menus, popovers, tooltips */
+menu, .menu, .context-menu, popover, popover.background {
+  background-color: {{surface}};
+  border: 1px solid {{metal_lo}};
+  color: {{text}};
+}
+menu menuitem:hover, .menu menuitem:hover, popover modelbutton:hover {
+  background-image: linear-gradient(to right, {{accent}}, {{accent_lo}});
+  color: {{text_on_accent}};
+}
+menubar { background-color: {{surface}}; border-bottom: 1px solid {{metal_lo}}; }
+menubar > menuitem:hover { box-shadow: inset 0 -3px {{metal}}; color: {{metal_hi}}; }
+separator { background-color: {{border}}; }
+
+tooltip, tooltip.background {
+  background-color: {{parchment}};
+  border: 1px solid {{metal_lo}};
+  border-radius: 3px;
+  color: {{ink}};
+  text-shadow: none;
+}
+tooltip * { color: {{ink}}; }
+
+/* ---------------------------------------------------------------- scrollbars */
+scrollbar { background-color: {{bg_alt}}; border-color: {{border}}; }
+scrollbar slider {
+  background-color: {{metal_lo}};
+  border: 1px solid {{bg_alt}};
+  min-width: 7px; min-height: 7px;
+}
+scrollbar slider:hover { background-color: {{metal}}; }
+scrollbar slider:active { background-color: {{metal_hi}}; }
+
+/* ---------------------------------------------------------------- dialogs, infobars, frames */
+messagedialog .titlebar, messagedialog.background { background-color: {{surface}}; }
+messagedialog .dialog-action-area button { border-radius: 0; }
+infobar.info > revealer > box { background-color: {{accent_lo}}; }
+infobar.warning > revealer > box { background-color: shade({{warning}}, 0.55); }
+infobar.error > revealer > box { background-color: shade({{danger}}, 0.55); }
+frame > border, .frame { border-color: {{metal_lo}}; }
+
+/* ---------------------------------------------------------------- terminal */
+vte-terminal { background-color: {{bg_alt}}; color: {{text}}; }
+
+/* ================================================================ ornate layer
+ * Textures and the gilded frame are generated by build.py into assets/.
+ * Cinzel (SIL OFL) is installed by install.sh; falls back to a serif if missing.
+ */
+headerbar, .titlebar:not(headerbar) {
+  background-image: linear-gradient(to bottom, {{metal,0.08}}, rgba(0, 0, 0, 0.3)), url("assets/stone.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+headerbar:backdrop, .titlebar:backdrop {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("assets/stone.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+headerbar .title, .titlebar .title, messagedialog .titlebar .title, messagedialog label.title {
+  font-family: "Cinzel", "Cinzel Decorative", serif;
+  font-weight: 700;
+}
+
+.sidebar, placessidebar list, stacksidebar list, .navigation-sidebar {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url("assets/stone.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+
+button.suggested-action {
+  background-image: linear-gradient(to bottom, {{accent_hi,0.85}}, {{accent_lo,0.95}}), url("assets/leather.png");
+  background-repeat: no-repeat, repeat;
+  background-size: auto, 128px 128px;
+}
+
+tooltip, tooltip.background {
+  background-image: url("assets/parchment.png");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+  border-style: solid;
+  border-width: 12px;
+  border-image: url("assets/frame-48.png") 12 stretch;
+  border-radius: 0;
+  padding: 2px 4px;
+}
+
+popover, popover.background, menu, .menu, .context-menu {
+  border-style: solid;
+  border-width: 12px;
+  border-image: url("assets/frame-48.png") 12 stretch;
+  border-radius: 0;
+}
