@@ -304,7 +304,11 @@ pub fn apply(ctx: &Ctx, variant: &str, parts: &[Part]) -> Result<()> {
         fs::create_dir_all(state_dir()?)?;
         fs::write(state_dir()?.join("active"), variant)?;
     }
-    println!("{theme} applied. Folder icons for manual use: {}", dest.join("Icons").display());
+    if dry {
+        println!("[dry-run] {theme} would be applied; nothing was changed.");
+    } else {
+        println!("{theme} applied. Folder icons for manual use: {}", dest.join("Icons").display());
+    }
     Ok(())
 }
 

@@ -270,7 +270,11 @@ pub fn apply(ctx: &Ctx, variant: &str, parts: &[Part]) -> Result<()> {
         fs::create_dir_all(&d.state)?;
         fs::write(active_path(&d), variant)?;
     }
-    println!("{theme} applied. Restart open apps to pick up the GTK theme.");
+    if dry {
+        println!("[dry-run] {theme} would be applied; nothing was changed.");
+    } else {
+        println!("{theme} applied. Restart open apps to pick up the GTK theme.");
+    }
     Ok(())
 }
 

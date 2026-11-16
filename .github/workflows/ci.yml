@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rendering libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends librsvg2-2 libcairo2 libgdk-pixbuf-2.0-0 fonts-dejavu-core fontconfig
+      - name: Quick theme build
+        run: python3 build.py --fast --variant Crown
+      - name: Client tests
+        run: |
+          rustup toolchain install stable --profile minimal && rustup default stable
+          cargo test --manifest-path client/Cargo.toml
+      - name: Client builds for Windows
+        run: |
+          rustup target add x86_64-pc-windows-gnu
+          sudo apt-get install -y --no-install-recommends gcc-mingw-w64-x86-64
+          cargo build --manifest-path client/Cargo.toml --target x86_64-pc-windows-gnu
