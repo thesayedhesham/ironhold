@@ -57,7 +57,27 @@ def rune_ring(c, cx, cy, r, count, size, seed=7, stroke=None, width=None):
 # ======================================================================= emblem
 def emblem(c, kind, pre="e"):
     """Original crest in a 200x200 box: kite shield + sword (Crown) or round shield + crossed axes (Ember)."""
-    if kind == "sword":
+    if kind == "skull":
+        bones = "".join(
+            f'<g transform="rotate({a} 100 100)"><rect x="34" y="95" width="132" height="10" rx="5" fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="2"/>'
+            f'<circle cx="34" cy="94" r="8" fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="2"/><circle cx="34" cy="106" r="8" fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="2"/>'
+            f'<circle cx="166" cy="94" r="8" fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="2"/><circle cx="166" cy="106" r="8" fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="2"/></g>'
+            for a in (35, -35))
+        body = f"""
+  <path d="M100 12 L172 36 L160 128 L100 188 L40 128 L28 36 Z" fill="url(#{pre}banner)" stroke="url(#{pre}metal)" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M100 28 L158 47 L148 122 L100 170 L52 122 L42 47 Z" fill="none" stroke="{c['metal_lo']}" stroke-width="2" stroke-dasharray="7 5"/>
+  {bones}
+  <path d="M100 46 C132 46 150 68 148 96 C147 110 140 118 134 122 L132 140 L68 140 L66 122 C60 118 53 110 52 96 C50 68 68 46 100 46 Z"
+        fill="url(#{pre}steel)" stroke="{c['bg_alt']}" stroke-width="3"/>
+  <path d="M70 60 C80 52 92 50 100 50" fill="none" stroke="#fff" stroke-width="3" opacity=".45"/>
+  <path d="M68 96 C68 84 78 80 88 84 C94 88 92 104 84 108 C76 111 68 106 68 96 Z M132 96 C132 84 122 80 112 84 C106 88 108 104 116 108 C124 111 132 106 132 96 Z"
+        fill="{c['bg_alt']}"/>
+  <circle cx="81" cy="96" r="5" fill="{c['glow']}"/><circle cx="119" cy="96" r="5" fill="{c['glow']}"/>
+  <circle cx="81" cy="96" r="10" fill="{c['glow']}" opacity=".25"/><circle cx="119" cy="96" r="10" fill="{c['glow']}" opacity=".25"/>
+  <path d="M100 108 L94 122 H106 Z" fill="{c['bg_alt']}"/>
+  <path d="M74 128 H126 M80 128 V140 M90 128 V141 M100 128 V141 M110 128 V141 M120 128 V140" stroke="{c['bg_alt']}" stroke-width="2.5"/>
+  <path d="M112 50 L106 64 L114 72" fill="none" stroke="{c['bg_alt']}" stroke-width="2" opacity=".7"/>"""
+    elif kind == "sword":
         body = f"""
   <path d="M100 18 L164 40 C164 110 140 150 100 182 C60 150 36 110 36 40 Z"
         fill="url(#{pre}banner)" stroke="url(#{pre}metal)" stroke-width="9" stroke-linejoin="round"/>
@@ -134,8 +154,9 @@ def _double_arrow(c, rot):
     return _cursor(c, _shadowed(d, c, transform=f"rotate({rot} 16 16)"))
 
 
-def cursor_svgs(c):
-    """Return {name: (svg_or_list_of_frames, hotspot32, frame_ms)}."""
+def cursor_svgs(c, style="plate"):
+    """Return {name: (svg_or_list_of_frames, hotspot32, frame_ms)}.
+    style: plate (steel gauntlet), spiked (black iron gauntlet) or bone (skeletal hand)."""
     arrow = _shadowed(ARROW, c) + f'<path d="M4.6 6 V20.5" stroke="{c["steel_hi"]}" stroke-width=".9" opacity=".8"/>'
     hand = (_shadowed(HAND, c)
             + f'<path d="M9.8 9 h3.4 M14.6 15 h3.6 M18.6 15.2 h3.6 M10 24.6 Q16 23.2 24.4 24.2" '
@@ -158,20 +179,28 @@ def cursor_svgs(c):
     frames = 12
     wait = [_cursor(c, _ring(c, 16, 16, 10, i * 360 / frames, 3.2)) for i in range(frames)]
     progress = [_cursor(c, arrow + _ring(c, 24, 24, 5.2, i * 360 / frames, 2.2)) for i in range(frames)]
+    frames = 12
+    hand_default, hot_default = hand_cursor(c, style)
+    hand_link, hot_link = hand_cursor(c, style, angle=-6, tip=(14, 2))
+    seal = (f'<circle cx="50" cy="50" r="11" fill="url(#cgem)" stroke="url(#cmetal)" stroke-width="2.4"/>'
+            f'<text x="50" y="56.5" font-family="DejaVu Serif, serif" font-weight="bold" font-size="17" '
+            f'text-anchor="middle" fill="{c["text_on_accent"]}">?</text>')
+    help_hand, _ = hand_cursor(c, style, extra=seal)
+    busy = [hand_cursor(c, style, extra=_ring(c, 50, 50, 9, i * 360 / frames, 3.6))[0] for i in range(frames)]
     return {
-        "default": (_cursor(c, arrow), (3, 2), 0),
-        "pointer": (_cursor(c, hand), (11, 2), 0),
+        "default": (hand_default, hot_default, 0),
+        "pointer": (hand_link, hot_link, 0),
         "text": (_cursor(c, ibeam), (16, 16), 0),
         "crosshair": (_cursor(c, cross), (16, 16), 0),
         "not-allowed": (_cursor(c, nope), (16, 16), 0),
         "move": (_cursor(c, fleur), (16, 16), 0),
-        "help": (_cursor(c, help_), (3, 2), 0),
+        "help": (help_hand, hot_default, 0),
         "ns-resize": (_double_arrow(c, 0), (16, 16), 0),
         "ew-resize": (_double_arrow(c, 90), (16, 16), 0),
         "nwse-resize": (_double_arrow(c, -45), (16, 16), 0),
         "nesw-resize": (_double_arrow(c, 45), (16, 16), 0),
         "wait": (wait, (16, 16), 60),
-        "progress": (progress, (3, 2), 60),
+        "progress": (busy, hot_default, 60),
     }
 
 
@@ -540,3 +569,149 @@ def ui_assets(c):
         "leather.png": (texture_svg(c, "leather"), 256, 256),
         "parchment.png": (texture_svg(c, "parchment"), 256, 256),
     }
+
+
+# ======================================================================= realistic hand cursors (64x64 design grid)
+# Drawn in a local "finger points straight up" frame (tip at 47,2), then rotated into place.
+MATERIALS = {
+    "plate":  {"lo": "#2b313d", "mid": "#8e98aa", "hi": "#f6f9fd", "edge": "#0d1015"},
+    "spiked": {"lo": "#110d0b", "mid": "#4d413a", "hi": "#b9a898", "edge": "#050403"},
+    "bone":   {"lo": "#4a412f", "mid": "#c8bc98", "hi": "#fffbec", "edge": "#17140e"},
+}
+
+
+def _hand_defs(c, m):
+    return f"""
+  <linearGradient id="gx" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="{m['edge']}"/><stop offset=".12" stop-color="{m['lo']}"/>
+    <stop offset=".34" stop-color="{m['mid']}"/><stop offset=".46" stop-color="{m['hi']}"/>
+    <stop offset=".6" stop-color="{m['mid']}"/><stop offset=".9" stop-color="{m['lo']}"/>
+    <stop offset="1" stop-color="{m['edge']}"/></linearGradient>
+  <linearGradient id="gd" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="{m['hi']}"/><stop offset=".3" stop-color="{m['mid']}"/>
+    <stop offset=".75" stop-color="{m['lo']}"/><stop offset="1" stop-color="{m['edge']}"/></linearGradient>
+  <linearGradient id="gt" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="{c['metal_hi']}"/><stop offset=".45" stop-color="{c['metal']}"/>
+    <stop offset="1" stop-color="{c['metal_lo']}"/></linearGradient>
+  <radialGradient id="gk" cx=".35" cy=".3" r=".75">
+    <stop offset="0" stop-color="{m['hi']}"/><stop offset=".5" stop-color="{m['mid']}"/>
+    <stop offset="1" stop-color="{m['lo']}"/></radialGradient>
+  <radialGradient id="gr" cx=".35" cy=".3" r=".7">
+    <stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="{c['metal_hi']}"/>
+    <stop offset="1" stop-color="{c['metal_lo']}"/></radialGradient>
+  <linearGradient id="gl" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#2a170c"/><stop offset=".4" stop-color="#7a4a28"/>
+    <stop offset=".6" stop-color="#5c361c"/><stop offset="1" stop-color="#22130a"/></linearGradient>
+  <linearGradient id="gc" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="{c['accent_lo']}"/><stop offset="1" stop-color="{c['bg_alt']}"/></linearGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="150%" height="150%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="1.6"/><feOffset dx="2" dy="2.5"/>
+    <feComponentTransfer><feFuncA type="linear" slope=".55"/></feComponentTransfer>
+    <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1.5"/><feGaussianBlur stdDeviation="2.4"/>
+    <feFlood flood-color="{c['glow']}"/><feComposite operator="in" in2="SourceAlpha"/>
+    <feComposite operator="in"/>
+    <feMerge><feMergeNode/><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>"""
+
+
+def _seg(x, y, w, h, m, tip=False, r=3.5):
+    """One armour plate: cylindrical shading, rim light, occlusion line at the bottom."""
+    if tip:
+        d = f"M{x} {y + h} V{y + 6} Q{x + w / 2} {y - 4} {x + w} {y + 6} V{y + h} Z"
+    else:
+        d = (f"M{x + r} {y} H{x + w - r} Q{x + w} {y} {x + w} {y + r} V{y + h - r} Q{x + w} {y + h} {x + w - r} {y + h} "
+             f"H{x + r} Q{x} {y + h} {x} {y + h - r} V{y + r} Q{x} {y} {x + r} {y} Z")
+    return (f'<path d="{d}" fill="url(#gx)" stroke="{m["edge"]}" stroke-width="1.3" stroke-linejoin="round"/>'
+            f'<path d="M{x + w * .44} {y + (5 if tip else 2.5)} V{y + h - 2.5}" stroke="#fff" stroke-width="1.1" '
+            f'stroke-linecap="round" opacity=".55"/>'
+            f'<path d="M{x + 1.5} {y + h - 1.2} H{x + w - 1.5}" stroke="#000" stroke-width="1.6" opacity=".45"/>')
+
+
+def _rivet(x, y, r=1.6):
+    return f'<circle cx="{x}" cy="{y}" r="{r}" fill="url(#gr)" stroke="#000" stroke-width=".5" stroke-opacity=".6"/>'
+
+
+def _gauntlet(c, style):
+    m = MATERIALS[style]
+    spiked = style == "spiked"
+    out = []
+    # thumb (behind the hand plate)
+    out.append(f'<g transform="rotate(-16 40 70)">{_seg(30.5, 55, 11.5, 14, m)}{_seg(31, 44, 10.5, 13, m, tip=True)}</g>')
+    # back-of-hand plate with a forged centre ridge
+    out.append(f'<path d="M37 50 C37 46 40 45 44 45 L80 45 C84 45 86 48 85.5 52 L83.5 76 C83 79 80 81 76 81 L45 81 '
+               f'C41 81 38.5 79 38 76 Z" fill="url(#gd)" stroke="{m["edge"]}" stroke-width="1.4"/>'
+               f'<path d="M61.5 49 L60.5 79" stroke="#fff" stroke-width="1.2" opacity=".35"/>'
+               f'<path d="M63.2 49 L62.2 79" stroke="#000" stroke-width="1.2" opacity=".35"/>'
+               f'<path d="M40 76 Q61 72 83 76" fill="none" stroke="#000" stroke-width="1.2" opacity=".3"/>')
+    if spiked:
+        out.append('<path d="M45 58 l8 6 M70 55 l7 9 M50 70 l6 -3" stroke="#fff" stroke-width=".7" opacity=".25"/>')
+    # curled fingers: knuckle plate + folded segment beneath
+    for x, w in ((54, 10.5), (64, 10), (73.5, 9)):
+        out.append(_seg(x, 51, w, 9, m, r=3) + '<rect x="%s" y="51" width="%s" height="9" rx="3" fill="#000" opacity=".22"/>' % (x, w))
+        out.append(_seg(x, 43, w, 9.5, m, r=4.2))
+        if spiked:
+            out.append(f'<path d="M{x + 2} {44} L{x + w / 2} {35} L{x + w - 2} {44} Z" fill="url(#gx)" stroke="{m["edge"]}" stroke-width="1"/>')
+        else:
+            out.append(_rivet(x + w / 2, 47.5, 1.3))
+    # index finger: proximal, middle, tip
+    out.append(_seg(40, 30, 14, 17, m) + _seg(40.5, 17, 13, 15, m) + _seg(41, 4, 12, 15, m, tip=True))
+    out.append(f'<path d="M39.5 45.5 H54.5" stroke="url(#gt)" stroke-width="2.6"/>')
+    out.append(_rivet(42.2, 24) + _rivet(51.8, 24) + _rivet(42, 38) + _rivet(52, 38))
+    # cuff
+    if spiked:
+        out.append(f'<path d="M32 90 L20 95 L33 97 Z M89 90 L101 88 L90 97 Z" fill="url(#gx)" stroke="{m["edge"]}" stroke-width="1"/>')
+    out.append(f'<path d="M36 80 H86 L93 99 Q61 104 28 99 Z" fill="url(#gx)" stroke="{m["edge"]}" stroke-width="1.4"/>')
+    if spiked:
+        out.append(f'<path d="M34 86 L88 95 L87 99 L33 90 Z M40 98 L86 84 L88 88 L42 101 Z" fill="url(#gl)" stroke="#120a05" stroke-width=".8"/>'
+                   f'<path d="M36 88 L86 96.5 M42 99.5 L86 86.5" stroke="#d9b48a" stroke-width=".6" stroke-dasharray="1.6 1.4" opacity=".7"/>')
+    out.append(f'<path d="M35 78 H87 V84.5 H35 Z" fill="url(#gt)" stroke="{m["edge"]}" stroke-width="1"/>'
+               f'<path d="M28.5 97.5 Q61 102.5 92.5 97.5 L93.5 101 Q61 106.5 27.5 101 Z" fill="url(#gt)" stroke="{m["edge"]}" stroke-width="1"/>')
+    out.append(_rivet(40, 81.3) + _rivet(61, 81.3) + _rivet(82, 81.3))
+    return "".join(out)
+
+
+def _bone(x1, y1, x2, y2, w, m):
+    return (f'<path d="M{x1} {y1} L{x2} {y2}" stroke="{m["edge"]}" stroke-width="{w + 2}" stroke-linecap="round"/>'
+            f'<path d="M{x1} {y1} L{x2} {y2}" stroke="{m["mid"]}" stroke-width="{w}" stroke-linecap="round"/>'
+            f'<path d="M{x1 - w * .18} {y1 + 1} L{x2 - w * .18} {y2 - 1}" stroke="{m["hi"]}" stroke-width="{w * .35}" stroke-linecap="round" opacity=".9"/>'
+            f'<circle cx="{x1}" cy="{y1}" r="{w * .62}" fill="url(#gk)" stroke="{m["edge"]}" stroke-width=".9"/>'
+            f'<circle cx="{x2}" cy="{y2}" r="{w * .62}" fill="url(#gk)" stroke="{m["edge"]}" stroke-width=".9"/>')
+
+
+def _skeleton(c):
+    m = MATERIALS["bone"]
+    out = []
+    # thumb
+    out.append(_bone(41, 70, 33, 58, 5.5, m) + _bone(33, 58, 28, 48, 5, m))
+    # metacarpals
+    for (x1, y1), (x2, y2) in (((47, 47), (49, 76)), ((58, 48), (57, 77)), ((67, 50), (64, 77)), ((75, 53), (70, 76))):
+        out.append(_bone(x2, y2, x1, y1, 5, m))
+    # curled fingers: knuckles with the first bone folding toward the viewer
+    for x, y in ((58, 48), (67, 50), (75, 53)):
+        out.append(_bone(x, y, x + 1, y + 9, 4.6, m))
+    # index finger: three phalanges with knobbly joints, tapering to the tip
+    out.append(_bone(47, 46, 47, 31, 5.6, m) + _bone(47, 31, 47, 18, 5, m) + _bone(47, 18, 47, 6, 4.4, m))
+    out.append(f'<path d="M44.8 6 Q47 0.5 49.2 6 Z" fill="{m["mid"]}" stroke="{m["edge"]}" stroke-width=".9"/>')
+    # carpals
+    for x, y in ((48, 79), (54, 81), (60, 80), (66, 79), (51, 84), (63, 84)):
+        out.append(f'<circle cx="{x}" cy="{y}" r="3.2" fill="url(#gk)" stroke="{m["edge"]}" stroke-width=".8"/>')
+    # tattered grave-cloth at the wrist
+    out.append(f'<path d="M38 82 Q60 78 86 82 L90 100 L85 96 L81 104 L76 97 L70 105 L64 98 L57 104 L52 97 L45 103 L41 96 L33 101 Z" '
+               f'fill="url(#gc)" stroke="#000" stroke-width="1.2"/>'
+               f'<path d="M44 85 L46 98 M56 84 L57 100 M68 84 L67 99 M79 85 L77 96" stroke="#000" stroke-width="1" opacity=".45"/>'
+               f'<path d="M37 84 Q61 79 87 84" fill="none" stroke="{c["metal"]}" stroke-width="2.2"/>')
+    return "".join(out)
+
+
+def hand_cursor(c, style, angle=-28, tip=(3, 2), scale=.63, extra=""):
+    """Full 64x64 cursor SVG. Returns (svg, hotspot_in_32_grid)."""
+    body = _skeleton(c) if style == "bone" else _gauntlet(c, style)
+    filt = "glow" if style == "bone" else "shadow"
+    hand = (f'<g filter="url(#{filt})"><g transform="translate({tip[0]} {tip[1]}) scale({scale}) rotate({angle}) '
+            f'translate(-47 -2)">{body}</g></g>')
+    if style == "bone":
+        hand = f'<g filter="url(#shadow)">{hand}</g>'
+    svg = (f'<svg {SVG} width="64" height="64" viewBox="0 0 64 64"><defs>{_hand_defs(c, MATERIALS[style])}'
+           f'{_metal_defs(c, "c")}</defs>{hand}{extra}</svg>')
+    return svg, (tip[0] / 2, tip[1] / 2)

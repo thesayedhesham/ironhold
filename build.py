@@ -51,7 +51,8 @@ class Variant:
         self.label = v["label"]
         self.c = v["colors"]
         self.emblem = v["emblem"]
-        self.spiky = v["emblem"] == "axes"
+        self.spiky = v["emblem"] != "sword"
+        self.cursor_style = v.get("cursor", "plate")
         self.win_accent = self.c[v.get("windows_accent", "metal")]
         self.desc = cfg["description"]
         self.sound = v.get("sound", {"style": "crown", "root": 523.25})
@@ -105,7 +106,7 @@ class Variant:
         if self._cursor_cache is None:
             self._cursor_cache = {}
         out = {}
-        for name, (svg, hot, ms) in art.cursor_svgs(self.c).items():
+        for name, (svg, hot, ms) in art.cursor_svgs(self.c, self.cursor_style).items():
             frames = svg if isinstance(svg, list) else [svg]
             rendered = []
             for i, f in enumerate(frames):

@@ -272,7 +272,57 @@ def ember(root):
     }
 
 
-STYLES = {"crown": crown, "ember": ember}
+def whisper(dur, seed=13, rising=None):
+    """Breathy, formant-ish noise: band-limited noise with a slow swell."""
+    def env(t):
+        x = t / dur
+        if rising is True:
+            return x ** 1.5
+        if rising is False:
+            return (1 - x) ** 1.5
+        return math.sin(math.pi * x) ** 2
+    return lowpass(highpass(noise(dur, seed, env), 700), 3200)
+
+
+def rattle(dur=0.5, hits=9, seed=17):
+    """Clattering bones: a burst of short, dry, woody knocks."""
+    rng = random.Random(seed)
+    parts = [(rng.uniform(0, dur * .8), metal(rng.uniform(700, 1400), .09, .4), rng.uniform(.4, 1)) for _ in range(hits)]
+    return mix(dur + .15, *parts)
+
+
+def grave(root):
+    n = lambda s: _n(root, s)
+    rv = lambda x, wet=.45, tail=1.8: reverb(x, wet, .88, tail)
+    ghost = lambda f, d, e=None: horn(f, d, e, bright=.25, attack=.35, vibrato=5.5)
+    toll = lambda f, d=2.6: bell(f, d, .45)
+    return {
+        "bell": rv(mix(2.6, (0, toll(n(12)), 1))),
+        "dialog-information": rv(mix(2.8, (0, toll(n(12)), 1), (.02, toll(n(13), 2.2), .25))),
+        "dialog-question": rv(mix(3.0, (0, toll(n(12)), .9), (.25, toll(n(18)), .7))),
+        "dialog-warning": rv(mix(3.2, (0, toll(n(0)), 1), (.55, toll(n(0)), .9))),
+        "dialog-error": rv(mix(3.0, (0, gong(n(-12), 2.4), 1), (0, whisper(1.2), .5), (0, drum(50, .6), .7))),
+        "message": rv(sparkle(n(12), [0, 3, 6], .09, 1.2)),
+        "message-new-instant": rv(sparkle(n(12), [0, 3, 6, 9], .06, 1.0)),
+        "complete": rv(mix(2.8, (0, ghost(n(-12), 1.6, n(-9)), .8), (.4, toll(n(12)), .6))),
+        "desktop-login": rv(mix(5.0, (0, toll(n(0), 3.2), 1), (.9, toll(n(0), 3.2), .9), (1.8, toll(n(-5), 3.4), 1),
+                                (.3, ghost(n(-12), 3.4, n(-11)), .45), (.3, ghost(n(-5), 3.4, n(-4)), .3),
+                                (0, whisper(2.5, 21), .35)), .5, 2.2),
+        "desktop-logout": rv(mix(3.8, (0, ghost(n(-5), 2.4, n(-17)), .7), (0, toll(n(-5), 3.0), .9), (.2, whisper(1.6, 22, False), .4)), .5),
+        "device-added": shing(.6, True, low=True),
+        "device-removed": shing(.5, False, low=True),
+        "power-plug": rv(mix(1.6, (0, whisper(1.0, 23, True), .8), (.85, toll(n(19), 1.0), .4))),
+        "power-unplug": rv(mix(1.6, (0, whisper(1.0, 24, False), .8))),
+        "battery-low": rv(mix(2.2, (0, drum(48, .5, seed=1), 1), (.24, drum(44, .5, seed=2), .8),
+                              (1.0, drum(48, .5, seed=3), 1), (1.24, drum(44, .5, seed=4), .8)), .3),
+        "trash-empty": rv(rattle(.7, 12), .25, 1.0),
+        "audio-volume-change": mix(.25, (0, metal(1050, .12, .5), 1)),
+        "screen-capture": mix(.5, (0, rattle(.25, 4, 31), 1)),
+        "window-attention": rv(mix(2.6, (0, toll(n(19)), 1))),
+    }
+
+
+STYLES = {"crown": crown, "ember": ember, "grave": grave}
 
 # freedesktop event -> extra names that should play the same file
 SOUND_ALIASES = {

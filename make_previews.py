@@ -59,14 +59,14 @@ def nine_slice(uri, x, y, w, h, src=96, s=24, b=12):
 
 
 def mockup(v):
-    c, kind, spiky = v["colors"], v["emblem"], v["emblem"] == "axes"
+    c, kind, spiky = v["colors"], v["emblem"], v["emblem"] != "sword"
     wall = png_uri(sized(art.wallpaper_citadel(c, spiky), W, H), W, H)
     assets = {k: png_uri(svg, w, h) for k, (svg, w, h) in art.ui_assets(c).items()}
     icons = art.icon_svgs(c, kind)
     icon = {n: png_uri(icons[n], 64, 64) for n in
             ["user-home", "folder-documents", "folder-download", "folder-music", "folder-pictures",
              "folder-videos", "folder-templates", "user-trash-full"]}
-    cursor = png_uri(art.cursor_svgs(c)["pointer"][0], 32, 32)
+    cursor = png_uri(art.cursor_svgs(c, v.get("cursor", "plate"))["pointer"][0], 32, 32)
 
     wx, wy, ww, wh = 120, 78, 780, 500
     side = 190
@@ -156,7 +156,7 @@ def wall_sheet(cfg):
     tw, th, pad = 620, 349, 14
     imgs = []
     for row, (key, v) in enumerate(cfg["variants"].items()):
-        for col, (name, svg) in enumerate(art.wallpapers(v["colors"], v["emblem"], v["emblem"] == "axes").items()):
+        for col, (name, svg) in enumerate(art.wallpapers(v["colors"], v["emblem"], v["emblem"] != "sword").items()):
             x, y = pad + col * (tw + pad), pad + row * (th + pad)
             imgs.append(f'<image x="{x}" y="{y}" width="{tw}" height="{th}" href="{png_uri(sized(svg, tw, th), tw, th)}"/>'
                         f'<text x="{x + 12}" y="{y + th - 12}" font-family="{TITLE}" font-weight="bold" font-size="18" '
@@ -172,7 +172,7 @@ def asset_sheet(cfg):
         x = 14
         items.append(f'<text x="{x}" y="{y + 18}" font-family="{TITLE}" font-weight="bold" font-size="18" fill="{c["metal_hi"]}">{key}</text>')
         y += 30
-        for name, (svg, hot, ms) in art.cursor_svgs(c).items():
+        for name, (svg, hot, ms) in art.cursor_svgs(c, v.get("cursor", "plate")).items():
             s = svg[3] if isinstance(svg, list) else svg
             items.append(f'<image x="{x}" y="{y}" width="48" height="48" href="{png_uri(s, 48, 48)}"/>')
             x += 58
@@ -185,15 +185,31 @@ def asset_sheet(cfg):
     return f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{y}"><rect width="100%" height="100%" fill="#2a2a2a"/>{"".join(items)}</svg>', w, y
 
 
+def hand_sheet(cfg):
+    """Large close-up of each variant's hand cursors (normal, link, busy) on a neutral backdrop."""
+    items, x = [], 16
+    for key, v in cfg["variants"].items():
+        cur = art.cursor_svgs(v["colors"], v.get("cursor", "plate"))
+        for name in ("default", "pointer", "progress"):
+            svg = cur[name][0][2] if isinstance(cur[name][0], list) else cur[name][0]
+            items.append(f'<image x="{x}" y="16" width="128" height="128" href="{png_uri(svg, 128, 128)}"/>')
+            x += 136
+        items.append(f'<text x="{x - 210}" y="168" text-anchor="middle" font-family="{TITLE}" font-weight="bold" '
+                     f'font-size="17" fill="{v["colors"]["metal_hi"]}">{key}</text>')
+        x += 24
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{x}" height="184"><rect width="100%" height="100%" fill="#3b4038"/>'
+            f'{"".join(items)}</svg>'), x, 184
+
+
 def main():
     cfg = json.loads((ROOT / "config.json").read_text())
-    cfg["variants"] = {k: v for k, v in cfg["variants"].items() if k in ("Crown", "Ember")}
+    cfg["variants"] = {k: v for k, v in cfg["variants"].items() if k in ("Crown", "Ember", "Grave")}
     DOCS.mkdir(exist_ok=True)
     for key, v in cfg["variants"].items():
         out = DOCS / f"preview-{key.lower()}.png"
         raster.svg_to_png(mockup(v), out, W, H)
         print(f"wrote {out.relative_to(ROOT)}")
-    for name, (svg, w, h) in {"wallpapers.png": wall_sheet(cfg), "cursors-icons.png": asset_sheet(cfg)}.items():
+    for name, (svg, w, h) in {"wallpapers.png": wall_sheet(cfg), "cursors-icons.png": asset_sheet(cfg), "hand-cursors.png": hand_sheet(cfg)}.items():
         raster.svg_to_png(svg, DOCS / name, w, h)
         print(f"wrote docs/{name}")
 

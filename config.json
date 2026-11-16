@@ -39,7 +39,8 @@
       "sound": {
         "style": "crown",
         "root": 523.25
-      }
+      },
+      "cursor": "plate"
     },
     "Ember": {
       "label": "Ember (red & black, iron and bronze)",
@@ -78,6 +79,47 @@
       "sound": {
         "style": "ember",
         "root": 196.0
+      },
+      "cursor": "spiked"
+    },
+    "Grave": {
+      "label": "Grave (bone & sickly green, undead crypt)",
+      "emblem": "skull",
+      "cursor": "bone",
+      "windows_accent": "accent_hi",
+      "sound": {
+        "style": "grave",
+        "root": 220.0
+      },
+      "colors": {
+        "bg": "#0e1210",
+        "bg_alt": "#080a09",
+        "surface": "#161c19",
+        "surface_hi": "#1f2824",
+        "border": "#33403a",
+        "border_hi": "#4a5c53",
+        "metal": "#a3b36a",
+        "metal_hi": "#dbe6a4",
+        "metal_lo": "#55602f",
+        "accent": "#5e3a82",
+        "accent_hi": "#8455b0",
+        "accent_lo": "#36204d",
+        "text": "#e2e6d4",
+        "text_dim": "#9ba393",
+        "text_on_accent": "#f7f0ff",
+        "parchment": "#d5d2b6",
+        "ink": "#26281a",
+        "danger": "#c8432f",
+        "success": "#7fbf3f",
+        "warning": "#d9a43a",
+        "link": "#a6dc7c",
+        "sky_top": "#040706",
+        "sky_mid": "#16241c",
+        "sky_low": "#4a6a3c",
+        "glow": "#b4f27a",
+        "steel_hi": "#f4eed8",
+        "steel": "#bdb293",
+        "steel_lo": "#5a5240"
       }
     }
   }

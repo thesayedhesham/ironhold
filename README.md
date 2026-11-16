@@ -6,6 +6,7 @@ procedurally from code. The theme uses no game assets, logos or trademarks.
 
 ![Crown variant](docs/preview-crown.png)
 ![Ember variant](docs/preview-ember.png)
+![Grave variant](docs/preview-grave.png)
 
 <sub>Mockups rendered by `make_previews.py` from the theme's generated textures, frames, icons, cursors,
 wallpapers and fonts. They are not screenshots of a running desktop.</sub>
@@ -14,6 +15,7 @@ wallpapers and fonts. They are not screenshots of a running desktop.</sub>
 |---|---|
 | **Crown** | Blue and gold, polished steel, kite shield and sword crest, moonlit citadel |
 | **Ember** | Red and black, dark iron and bronze, spiked shield and crossed axes, burning sky |
+| **Grave** | Bone and sickly green with crypt purple, skull-and-crossbones crest, green-lit gothic keep |
 
 ## What you get
 
@@ -21,7 +23,7 @@ wallpapers and fonts. They are not screenshots of a running desktop.</sub>
 |---|---|---|
 | App theme | GTK 3 theme + libadwaita/GTK 4 recolor | Dark mode + accent color |
 | Desktop shell | GNOME Shell theme (panel, menus, dash, notifications, dialogs, lock screen) | - |
-| Cursors | Xcursor theme, 13 cursors + ~100 aliases, animated wait/progress | `.cur` / `.ani` scheme, 32-128 px |
+| Cursors | Shaded armored-hand pointers (steel plate, spiked iron or skeletal), 13 cursors + ~100 aliases, animated wait/progress | `.cur` / `.ani` scheme, 32-128 px |
 | Icons | Folders, home, trash, start-here (inherits Yaru for everything else) | `.ico` folder icons |
 | Wallpapers | 2 per variant, 4K, registered in Settings > Appearance | Same, plus a slideshow |
 | Sounds | freedesktop sound theme, 19 events + aliases | Sound scheme for 21 system events |
@@ -31,7 +33,15 @@ wallpapers and fonts. They are not screenshots of a running desktop.</sub>
 
 ![Wallpapers](docs/wallpapers.png)
 
-### Cursors and icons
+### Cursors
+
+Each variant points with its own fully shaded hand: a steel plate gauntlet with gold trim (Crown),
+a blackened spiked gauntlet with leather straps (Ember), or a glowing skeletal hand in grave-cloth
+(Grave). All are original drawings in the style of a classic fantasy RTS cursor, not Blizzard's cursor art.
+
+![Hand cursors](docs/hand-cursors.png)
+
+### All cursors and icons
 
 ![Cursors and icons](docs/cursors-icons.png)
 
@@ -102,6 +112,7 @@ python3 build.py --variant Ember --only cursors
 ```bash
 ./install.sh            # installs and applies Crown
 ./install.sh Ember      # installs and applies Ember
+./install.sh Grave      # installs and applies Grave
 ./install.sh --uninstall
 ```
 
@@ -111,7 +122,7 @@ restores it when you uninstall.
 
 ## Install on Windows
 
-1. Copy `dist/windows/Ironhold-Crown` (or `-Ember`) to the Windows PC.
+1. Copy `dist/windows/Ironhold-Crown` (or `-Ember` / `-Grave`) to the Windows PC.
 2. In that folder, run `powershell -ExecutionPolicy Bypass -File .\install.ps1`.
 
 The installer applies everything directly through Windows' own settings APIs, so it works from

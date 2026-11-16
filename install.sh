@@ -3,6 +3,7 @@
 #
 #   ./install.sh                 # install Crown and apply it
 #   ./install.sh Ember           # install Ember and apply it
+#   ./install.sh Grave           # install Grave and apply it
 #   ./install.sh Crown --no-apply
 #   ./install.sh --uninstall
 set -euo pipefail
