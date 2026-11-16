@@ -4,6 +4,12 @@ A desktop theme for Ubuntu (GNOME) and Windows 10/11, inspired by high-fantasy R
 forged iron, carved stone, gilded trim, war banners and runes. All artwork is original and generated
 procedurally from code. The theme uses no game assets, logos or trademarks.
 
+![Crown variant](docs/preview-crown.png)
+![Ember variant](docs/preview-ember.png)
+
+<sub>Mockups rendered by `make_previews.py` from the theme's generated textures, frames, icons, cursors,
+wallpapers and fonts. They are not screenshots of a running desktop.</sub>
+
 | Variant | Look |
 |---|---|
 | **Crown** | Blue and gold, polished steel, kite shield and sword crest, moonlit citadel |
@@ -20,6 +26,16 @@ procedurally from code. The theme uses no game assets, logos or trademarks.
 | Wallpapers | 2 per variant, 4K, registered in Settings > Appearance | Same, plus a slideshow |
 | Sounds | freedesktop sound theme, 19 events + aliases | Sound scheme for 21 system events |
 | Extras | - | Windows Terminal color scheme |
+
+### Wallpapers
+
+![Wallpapers](docs/wallpapers.png)
+
+### Cursors and icons
+
+![Cursors and icons](docs/cursors-icons.png)
+
+To regenerate these images after changing colors or art, run `python3 make_previews.py`.
 
 ## Using official Warcraft / WoW art (personal use)
 
@@ -98,7 +114,9 @@ restores it when you uninstall.
 1. Copy `dist/windows/Ironhold-Crown` (or `-Ember`) to the Windows PC.
 2. In that folder, run `powershell -ExecutionPolicy Bypass -File .\install.ps1`.
 
-This installs for the current user only and needs no admin rights. It applies the wallpaper, accent
+The installer applies everything directly through Windows' own settings APIs, so it works from
+scripts, WSL and with Spotlight wallpapers. It also registers the `.theme`, cursor scheme and sound
+scheme so you can switch back to them in Settings later. This installs for the current user only and needs no admin rights. It applies the wallpaper, accent
 color, dark mode, cursor scheme and sound scheme. To remove it, run `install.ps1 -Uninstall`.
 
 To use the folder icons, open a folder's Properties > Customize > Change Icon and pick a file
@@ -129,6 +147,7 @@ lib/cursorfmt.py     Xcursor, .cur, .ani and .ico writers
 lib/sound.py         procedural sound synthesis (bells, horns, drums, blades)
 lib/palette.py       palette extraction from artwork (gdk-pixbuf + k-means)
 variant_from_art.py  creates a variant from your images
+make_previews.py     renders the README images into docs/
 local-art/           your personal artwork (git-ignored)
 fonts/               Cinzel (OFL)
 src/gtk-3.0, src/gtk-4.0, src/gnome-shell   stylesheet templates
