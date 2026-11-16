@@ -96,6 +96,54 @@ variant, change `sound.root` in `config.json`, or edit the event recipes in `cro
 On Windows 10/11, the startup sound can't be changed by a theme, and the logon and logoff sounds
 only play if those events are enabled.
 
+## Ironhold client (Rust)
+
+`ironhold` is a single program for Ubuntu and Windows that applies, switches and removes the
+theme. The first time you apply, it saves your current look, so `ironhold restore` always returns
+you to the desktop you had before Ironhold.
+
+```text
+ironhold list                                  # variants in the packs folder
+ironhold apply crown                           # install and switch everything
+ironhold apply grave --only cursors,sounds     # just some parts
+ironhold art use ~/Pictures/wallpaper.jpg      # your own art as the wallpaper
+ironhold art use wallpaper.jpg --recolor       # ...and recolor the theme to match it
+ironhold status
+ironhold restore                               # back to your previous look
+ironhold uninstall                             # restore + remove all Ironhold files
+ironhold --dry-run apply ember                 # show what would change
+```
+
+`art use --recolor` recolors different things on each platform:
+
+- **Ubuntu (from a source checkout):** it builds a new variant from the artwork's colors, so
+  every widget, icon and cursor matches the art.
+- **Windows:** it applies a matching accent color. The cursors and sounds keep the current
+  variant's style.
+
+**What it changes:**
+
+| | Ubuntu | Windows |
+|---|---|---|
+| Install location | `~/.themes`, `~/.icons`, `~/.local/share` | `%LOCALAPPDATA%\Microsoft\Windows\Themes` |
+| Settings | `gsettings` | Your user's registry keys and Win32 calls |
+| Saved previous look | `~/.local/state/ironhold/backup.json` | `%LOCALAPPDATA%\Ironhold\backup.json` |
+
+Neither platform needs admin rights.
+
+The client looks for packs in `--packs <dir>` or `$IRONHOLD_PACKS`, then in `packs/` next to the
+executable, then in the nearest `dist/` folder. To make a portable Windows bundle, put
+`ironhold.exe` next to a `packs\windows\` folder copied from `dist/windows/`.
+
+Build the client:
+
+```bash
+cd client
+cargo build --release                                            # Linux binary
+cargo zigbuild --release --target x86_64-pc-windows-gnu          # Windows .exe from Linux (needs zig)
+cargo test
+```
+
 ## Build
 
 You only need Python 3 and the system librsvg/cairo libraries, which come with every GNOME desktop.
@@ -159,6 +207,7 @@ lib/sound.py         procedural sound synthesis (bells, horns, drums, blades)
 lib/palette.py       palette extraction from artwork (gdk-pixbuf + k-means)
 variant_from_art.py  creates a variant from your images
 make_previews.py     renders the README images into docs/
+client/              Rust client: apply / restore / art (Linux + Windows)
 local-art/           your personal artwork (git-ignored)
 fonts/               Cinzel (OFL)
 src/gtk-3.0, src/gtk-4.0, src/gnome-shell   stylesheet templates

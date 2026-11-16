@@ -73,6 +73,10 @@ class Variant:
         base = self.linux / "themes" / self.name
         self._assets(base / "gtk-3.0" / "assets")
         self._assets(base / "gtk-4.0" / "ironhold-assets")
+        fonts = self.linux / "fonts"
+        fonts.mkdir(parents=True, exist_ok=True)
+        for f in (ROOT / "fonts").glob("*"):
+            shutil.copy2(f, fonts / f.name)
         write(base / "gtk-3.0" / "gtk.css", self.tpl("gtk-3.0/gtk.css.in"))
         write(base / "gtk-3.0" / "gtk-dark.css", '@import url("gtk.css");\n')
         write(base / "gtk-4.0" / "gtk.css", self.tpl("gtk-4.0/gtk.css.in"))
